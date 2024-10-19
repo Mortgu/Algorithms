@@ -9,8 +9,8 @@ class RegisterMachine {
     private List<String> instructions = new ArrayList<>();
 
     public RegisterMachine() {
-        // Initalisiert den akkumulator mit 0.
-        registers.put("Akkumulator", 0);
+        // Initalisiert den Accumulator mit 0.
+        registers.put("Accumulator", 0);
 
         // Initialisiere die Register R1 - R4 mit dem Wert 0
         for (int i = 1; i <= 4; i++) {
@@ -29,6 +29,10 @@ class RegisterMachine {
     }
 
     public void loadProgram(String file) throws IOException {
+        File programFile = new File(file);
+        if (!programFile.exists() || !programFile.canRead()) {
+            throw new IOException("File not found or cannot be read: " + file);
+        }
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line;
 
@@ -50,7 +54,10 @@ class RegisterMachine {
             String[] parts = line.split(" ");
             String instruction = parts[0];
 
-            System.out.println("pc: " + pc);
+            if (parts.length < 2 && !instruction.equals("END")) {
+                System.out.println("Error: Invalid instruction format at line " + (pc + 1));
+                return;
+            }
         
             switch (instruction) {
                 case "PRINT":
@@ -61,32 +68,33 @@ class RegisterMachine {
                     setRegister(parts[1], 0);
                     pc++;           
                     break;
-                case "LOAD":
-                    setRegister("Akkumulator", readRegister(parts[1]));
+                case "LOAD", "CPY":
+                    setRegister("Accumulator", readRegister(parts[1]));
                     pc++;
                     break;
                 case "STORE":
-                    setRegister(parts[1], readRegister("Akkumulator"));
-                    pc++;
-                    break;
-                case "CPY":
-                    setRegister("Akkumulator", readRegister(parts[1]));
+                    setRegister(parts[1], readRegister("Accumulator"));
                     pc++;
                     break;
                 case "ADD":
-                    setRegister("Akkumulator", readRegister("Akkumulator") + readRegister(parts[1]));
+                    setRegister("Accumulator", readRegister("Accumulator") + readRegister(parts[1]));
                     pc++;
                     break;            
                 case "SUB":
-                    setRegister("Akkumulator", readRegister("Akkumulator") - readRegister(parts[1]));
+                    setRegister("Accumulator", readRegister("Accumulator") - readRegister(parts[1]));
                     pc++;
                     break;
                 case "MUL":
-                    setRegister("Akkumulator", readRegister("Akkumulator") * readRegister(parts[1]));
+                    setRegister("Accumulator", readRegister("Accumulator") * readRegister(parts[1]));
                     pc++;
                     break;
                 case "DIV":
-                    setRegister("Akkumulator", readRegister("Akkumulator") / readRegister(parts[1]));
+                    int divisor = readRegister(parts[1]);
+                    if (divisor == 0) {
+                        System.out.println("Error: Division by zero");
+                        return;
+                    }
+                    setRegister("Accumulator", readRegister("Accumulator") / divisor);
                     pc++;
                     break;
                 case "INC":
@@ -98,12 +106,12 @@ class RegisterMachine {
                     pc++;
                     break;
                 case "JZERO": 
-                    if (readRegister("Akkumulator") == 0)
+                    if (readRegister("Accumulator") == 0)
                         pc = Integer.parseInt(parts[1]) - 1; 
                     else pc++;
                     break;
                 case "JNZERO":
-                    if (readRegister("Akkumulator") != 0) 
+                    if (readRegister("Accumulator") != 0) 
                         pc = Integer.parseInt(parts[1]) - 1;
                     else pc++;
                     break;
@@ -111,7 +119,7 @@ class RegisterMachine {
                     pc = Integer.parseInt(parts[1]) - 1;
                     break; 
                 case "END":
-                    System.out.print("Akkumulator: " + readRegister("Akkumulator")); 
+                    System.out.print("Accumulator: " + readRegister("Accumulator")); 
                     System.out.print(" R1: " + readRegister("R1")); 
                     System.out.print(" R2: " + readRegister("R2")); 
                     System.out.print(" R3: " + readRegister("R3")); 
