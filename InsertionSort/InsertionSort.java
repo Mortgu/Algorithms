@@ -59,7 +59,14 @@ public class InsertionSort {
         System.out.println("BubbleSort Zahlen pro Minute: " + bubbleSortNumbersPerMinute);
         System.out.println("QuickSort Zahlen pro Minute: " + quickSortNumbersPerMinute);
         System.out.println("MergeSort Zahlen pro Minute: " + mergeSortNumbersPerMinute);
-        System.out.println("InsertionSort Zahlen pro Minute: " + insertionSortNumbersPerMinute);
+        System.out.println("InsertSort Zahlen pro Minute: " + insertionSortNumbersPerMinute);
+
+        int a[] = {12, 11, 13, 5, 6};
+        if (customAlg(a, 16)) {
+            System.out.println("Es gibt zwei verschiedene Elemente, deren Summe ergibt.");
+        } else {
+            System.out.println("Es gibt keine zwei verschiedenen Elemente, deren Summe ergibt.");
+        }
     }
 
     public static void insertionSort(int a[], int n) {
@@ -199,5 +206,34 @@ public class InsertionSort {
             j++;
             k++;
         }
+    }
+
+    public static void recrusiveMergeSort(int a[], int left, int right) {
+
+    }
+
+    public static void recrusiveMerge() {
+        
+    }
+
+    public static boolean customAlg(int a[], int s) {
+        Arrays.sort(a);
+
+        int left = 0;
+        int right = a.length - 1;
+
+        while (left < right) {
+            int sum = a[left] + a[right];
+            
+            if (sum == s) {
+                return true; 
+            } else if (sum < s) {
+                left++; 
+            } else {
+                right--; 
+            }
+        }
+
+        return false;
     }
 }
