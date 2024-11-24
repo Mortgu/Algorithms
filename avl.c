@@ -204,6 +204,78 @@ void delete(Node **root, int key) {
     }
 }
 
+void deleteIterative(Node **root, int key) {
+    Node *parent = NULL;
+    Node *current = *root;
+
+    // Step 1: Find the node to be deleted
+    while (current != NULL && current->key != key) {
+        parent = current;
+        if (key < current->key)
+            current = current->left;
+        else
+            current = current->right;
+    }
+
+    // If the key is not found
+    if (current == NULL) return;
+
+    // Node to be deleted has at most one child
+    if (current->left == NULL || current->right == NULL) {
+        Node *newCurr = (current->left == NULL) ? current->right : current->left;
+
+        if (parent == NULL) {
+            // If the node to be deleted is the root node
+            *root = newCurr;
+        } else if (current == parent->left) {
+            parent->left = newCurr;
+        } else {
+            parent->right = newCurr;
+        }
+        free(current);
+    } else {
+        // Node to be deleted has two children
+        Node *p = NULL;
+        Node *temp = current->right;
+
+        // Find the inorder successor
+        while (temp->left != NULL) {
+            p = temp;
+            temp = temp->left;
+        }
+
+        if (p != NULL) {
+            p->left = temp->right;
+        } else {
+            current->right = temp->right;
+        }
+
+        current->key = temp->key;
+        free(temp);
+    }
+
+    // Update heights and balance the tree
+    Node *node = parent;
+    while (node != NULL) {
+        updateHeight(node);
+        int balance = getBalance(node);
+
+        if (balance > 1 && getBalance(node->left) >= 0) {
+            rotateRight(&node);
+        } else if (balance > 1 && getBalance(node->left) < 0) {
+            rotateLeft(&(node->left));
+            rotateRight(&node);
+        } else if (balance < -1 && getBalance(node->right) <= 0) {
+            rotateLeft(&node);
+        } else if (balance < -1 && getBalance(node->right) > 0) {
+            rotateRight(&(node->right));
+            rotateLeft(&node);
+        }
+
+        node = (parent == NULL) ? NULL : ((key < parent->key) ? parent->left : parent->right);
+    }
+}
+
 void printNodes(Node *root, int space) {
     if (root == NULL)
         return;
