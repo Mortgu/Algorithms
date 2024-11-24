@@ -147,6 +147,63 @@ void checkRotationRight(Node **root) {
     }
 }
 
+Node *minValueNode(Node *node) {
+    Node *current = node;
+    while (current->left != NULL)
+        current = current->left;
+    return current;
+}
+
+void delete(Node **root, int key) {
+    if (*root == NULL)
+        return;
+
+    if (key < (*root)->key) {
+        delete(&((*root)->left), key);
+    } else if (key > (*root)->key) {
+        delete(&((*root)->right), key);
+    } else {
+        if ((*root)->left == NULL || (*root)->right == NULL) {
+            Node *temp = (*root)->left ? (*root)->left : (*root)->right;
+
+            if (temp == NULL) {
+                temp = *root;
+                *root = NULL;
+            } else {
+                **root = *temp;
+            }
+            free(temp);
+        } else {
+            Node *temp = minValueNode((*root)->right);
+            (*root)->key = temp->key;
+            delete(&((*root)->right), temp->key);
+        }
+    }
+
+    if (*root == NULL)
+        return;
+
+    updateHeight(*root);
+
+    int balance = getBalance(*root);
+
+    if (balance > 1 && getBalance((*root)->left) >= 0)
+        *root = rightRotate(*root);
+
+    if (balance > 1 && getBalance((*root)->left) < 0) {
+        (*root)->left = leftRotate((*root)->left);
+        *root = rightRotate(*root);
+    }
+
+    if (balance < -1 && getBalance((*root)->right) <= 0)
+        *root = leftRotate(*root);
+
+    if (balance < -1 && getBalance((*root)->right) > 0) {
+        (*root)->right = rightRotate((*root)->right);
+        *root = leftRotate(*root);
+    }
+}
+
 void printNodes(Node *root, int space) {
     if (root == NULL)
         return;
