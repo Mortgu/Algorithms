@@ -147,6 +147,135 @@ void checkRotationRight(Node **root) {
     }
 }
 
+Node *minValueNode(Node *node) {
+    Node *current = node;
+    while (current->left != NULL)
+        current = current->left;
+    return current;
+}
+
+void delete(Node **root, int key) {
+    if (*root == NULL)
+        return;
+
+    if (key < (*root)->key) {
+        delete(&((*root)->left), key);
+    } else if (key > (*root)->key) {
+        delete(&((*root)->right), key);
+    } else {
+        if ((*root)->left == NULL || (*root)->right == NULL) {
+            Node *temp = (*root)->left ? (*root)->left : (*root)->right;
+
+            if (temp == NULL) {
+                temp = *root;
+                *root = NULL;
+            } else {
+                **root = *temp;
+            }
+            free(temp);
+        } else {
+            Node *temp = minValueNode((*root)->right);
+            (*root)->key = temp->key;
+            delete(&((*root)->right), temp->key);
+        }
+    }
+
+    if (*root == NULL)
+        return;
+
+    updateHeight(*root);
+
+    int balance = getBalance(*root);
+
+    if (balance > 1 && getBalance((*root)->left) >= 0)
+        *root = rightRotate(*root);
+
+    if (balance > 1 && getBalance((*root)->left) < 0) {
+        (*root)->left = leftRotate((*root)->left);
+        *root = rightRotate(*root);
+    }
+
+    if (balance < -1 && getBalance((*root)->right) <= 0)
+        *root = leftRotate(*root);
+
+    if (balance < -1 && getBalance((*root)->right) > 0) {
+        (*root)->right = rightRotate((*root)->right);
+        *root = leftRotate(*root);
+    }
+}
+
+void deleteIterative(Node **root, int key) {
+    Node *parent = NULL;
+    Node *current = *root;
+
+    // Step 1: Find the node to be deleted
+    while (current != NULL && current->key != key) {
+        parent = current;
+        if (key < current->key)
+            current = current->left;
+        else
+            current = current->right;
+    }
+
+    // If the key is not found
+    if (current == NULL) return;
+
+    // Node to be deleted has at most one child
+    if (current->left == NULL || current->right == NULL) {
+        Node *newCurr = (current->left == NULL) ? current->right : current->left;
+
+        if (parent == NULL) {
+            // If the node to be deleted is the root node
+            *root = newCurr;
+        } else if (current == parent->left) {
+            parent->left = newCurr;
+        } else {
+            parent->right = newCurr;
+        }
+        free(current);
+    } else {
+        // Node to be deleted has two children
+        Node *p = NULL;
+        Node *temp = current->right;
+
+        // Find the inorder successor
+        while (temp->left != NULL) {
+            p = temp;
+            temp = temp->left;
+        }
+
+        if (p != NULL) {
+            p->left = temp->right;
+        } else {
+            current->right = temp->right;
+        }
+
+        current->key = temp->key;
+        free(temp);
+    }
+
+    // Update heights and balance the tree
+    Node *node = parent;
+    while (node != NULL) {
+        updateHeight(node);
+        int balance = getBalance(node);
+
+        if (balance > 1 && getBalance(node->left) >= 0) {
+            rotateRight(&node);
+        } else if (balance > 1 && getBalance(node->left) < 0) {
+            rotateLeft(&(node->left));
+            rotateRight(&node);
+        } else if (balance < -1 && getBalance(node->right) <= 0) {
+            rotateLeft(&node);
+        } else if (balance < -1 && getBalance(node->right) > 0) {
+            rotateRight(&(node->right));
+            rotateLeft(&node);
+        }
+
+        node = (parent == NULL) ? NULL : ((key < parent->key) ? parent->left : parent->right);
+    }
+}
+
 void printNodes(Node *root, int space) {
     if (root == NULL)
         return;

@@ -6,6 +6,7 @@ typedef struct Node {
 } Node;
 
 void insert(Node **root, int key);
+void delete(Node **root, int key);
 Node* createNode(int key, int height, Node *left, Node *right);
 int max(int a, int b);
 
