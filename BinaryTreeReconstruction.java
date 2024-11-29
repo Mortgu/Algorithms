@@ -1,4 +1,3 @@
-// TreeNode class definition
 class TreeNode {
     int val;
     TreeNode left;
@@ -11,7 +10,6 @@ class TreeNode {
 
 public class BinaryTreeReconstruction {
 
-    // Method to reconstruct binary tree from preorder and inorder traversal
     public TreeNode buildTreeFromPreIn(int[] preorder, int[] inorder) {
         return buildTreeFromPreIn(preorder, 0, preorder.length - 1, inorder, 0, inorder.length - 1);
     }
