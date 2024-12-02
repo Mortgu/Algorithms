@@ -59,6 +59,7 @@ void updateHeight(Node *root) {
     }
 }
 
+// Funktion zur Initialisierung eines neuen Knotens
 Node* createNode(int key, int height, Node *left, Node *right) {
     Node *node = (Node*) malloc(sizeof(Node));
 
@@ -76,6 +77,7 @@ Node* createNode(int key, int height, Node *left, Node *right) {
 }
 
 // Left Rotation
+// Laufzeit: O(1) - Die Rotation und Höhenaktualisierung sind konstante Zeitoperationen.
 void rotateLeft(Node** root) {
     Node* b = (*root)->right;
 
@@ -83,11 +85,12 @@ void rotateLeft(Node** root) {
     b->left = *root;
     *root = b;
 
-    updateHeight((*root)->left);
-    updateHeight(*root);
+    updateHeight((*root)->left); // O(1) - Höhe eines Knotens zu aktualisieren ist eine konstante Zeitoperation.
+    updateHeight(*root);         // O(1) - Höhe eines Knotens zu aktualisieren ist eine konstante Zeitoperation.
 }
 
 // Right Rotation
+// Laufzeit: O(1) - Die Rotation und Höhenaktualisierung sind konstante Zeitoperationen.
 void rotateRight(Node** root) {
     Node* b = (*root)->left;
 
@@ -95,13 +98,15 @@ void rotateRight(Node** root) {
     b->right = *root;
     *root = b;
 
-    updateHeight((*root)->right);
-    updateHeight(*root);
+    updateHeight((*root)->right); // O(1) - Höhe eines Knotens zu aktualisieren ist eine konstante Zeitoperation.
+    updateHeight(*root);          // O(1) - Höhe eines Knotens zu aktualisieren ist eine konstante Zeitoperation.
 }
 
+// Double Rotation Left
+// Laufzeit: O(1) - Besteht aus zwei Rotationen, jede Rotation ist eine konstante Zeitoperation.
 void doubleRotationLeft(Node *root) {
-    rotateRight(&(root->right));
-    rotateLeft(&root);
+    rotateRight(&(root->right)); // O(1) - Eine einzelne Rechtsrotation.
+    rotateLeft(&root);           // O(1) - Eine einzelne Linksrotation.
 }
 
 void doubleRotationRight(Node *root) {
@@ -217,15 +222,12 @@ void deleteIterative(Node **root, int key) {
             current = current->right;
     }
 
-    // If the key is not found
     if (current == NULL) return;
 
-    // Node to be deleted has at most one child
     if (current->left == NULL || current->right == NULL) {
         Node *newCurr = (current->left == NULL) ? current->right : current->left;
 
         if (parent == NULL) {
-            // If the node to be deleted is the root node
             *root = newCurr;
         } else if (current == parent->left) {
             parent->left = newCurr;
@@ -234,11 +236,9 @@ void deleteIterative(Node **root, int key) {
         }
         free(current);
     } else {
-        // Node to be deleted has two children
         Node *p = NULL;
         Node *temp = current->right;
 
-        // Find the inorder successor
         while (temp->left != NULL) {
             p = temp;
             temp = temp->left;
@@ -254,7 +254,6 @@ void deleteIterative(Node **root, int key) {
         free(temp);
     }
 
-    // Update heights and balance the tree
     Node *node = parent;
     while (node != NULL) {
         updateHeight(node);
@@ -280,19 +279,15 @@ void printNodes(Node *root, int space) {
     if (root == NULL)
         return;
 
-    // Increase distance between levels
     int indent = 5;
     space += indent;
 
-    // Print the right subtree first
     printNodes(root->right, space);
 
-    // Print current node after space
     printf("\n");
     for (int i = indent; i < space; i++)
         printf(" ");
     printf("%d\n", root->key);
 
-    // Print the left subtree
     printNodes(root->left, space);
 }
