@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define NUM_THREADS 3
+#define NUM_THREADS 6
 #define TCOUNT 10
-#define COUNT_LIMIT 12
+#define COUNT_LIMIT 120
 
 int count = 0;
 
