@@ -3,27 +3,22 @@
 
 #define MAX_LEVEL 6
 
-typedef struct Node {
+typedef struct SkipNode {
     int key, value;
-    struct Node **forward;
-} Node;
+    struct SkipNode *forward[]; // Express routes L1, L2, ...
+} SkipNode;
 
-typedef struct List {
-    struct Node *header;
+typedef struct SkipList {
     int level, size;
-} List;
+    struct SkipNode *header;
+} SkipList;
 
-List* init(List* list);
-void deinit();
+SkipList* init(SkipList* list);
+int search(SkipList* list, int key);
+void insert(SkipList* list, int key, int value);
 
-int insert(List* list, int key, int value);
 
-void delete(int key);
-void search(int key);
-
-void print();
-
-static int rand_level();
-static void dump(List *list);
+SkipNode* createNode(int key, int value, int level);
+int randomLevel();
 
 #endif

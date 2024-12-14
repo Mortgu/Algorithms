@@ -1,15 +1,15 @@
 public class BinarySearchTree {
-    class Node {
+    class SkipNode {
         int key;
-        Node left, right;
+        SkipNode left, right;
 
-        public Node(int item) {
+        public SkipNode(int item) {
             key = item;
             left = right = null;
         }
     }
 
-    Node root;
+    SkipNode root;
 
     BinarySearchTree() {
         root = null;
@@ -19,10 +19,10 @@ public class BinarySearchTree {
         root = insertRec(root, key);
     }
 
-    Node insertRec(Node root, int key) {
+    SkipNode insertRec(SkipNode root, int key) {
         // Time complexity: O(h), where h is the height of the tree
         if (root == null) {
-            root = new Node(key);
+            root = new SkipNode(key);
             return root;
         }
 
@@ -38,7 +38,7 @@ public class BinarySearchTree {
         root = deleteRec(root, key);
     }
 
-    Node deleteRec(Node root, int key) {
+    SkipNode deleteRec(SkipNode root, int key) {
         // Time complexity: O(h), where h is the height of the tree
         if (root == null) return root;
 
@@ -59,7 +59,7 @@ public class BinarySearchTree {
         return root;
     }
 
-    int minValue(Node root) {
+    int minValue(SkipNode root) {
         // Time complexity: O(h), where h is the height of the tree
         int minv = root.key;
         while (root.left != null) {
@@ -73,10 +73,10 @@ public class BinarySearchTree {
         root = deleteIterative(root, key);
     }
 
-    Node deleteIterative(Node root, int key) {
+    SkipNode deleteIterative(SkipNode root, int key) {
         // Time complexity: O(h), where h is the height of the tree
-        Node parent = null;
-        Node current = root;
+        SkipNode parent = null;
+        SkipNode current = root;
 
         while (current != null && current.key != key) {
             parent = current;
@@ -89,7 +89,7 @@ public class BinarySearchTree {
         if (current == null) return root;
 
         if (current.left == null || current.right == null) {
-            Node newCurr;
+            SkipNode newCurr;
             if (current.left == null)
                 newCurr = current.right;
             else
@@ -103,8 +103,8 @@ public class BinarySearchTree {
             else
                 parent.right = newCurr;
         } else {
-            Node p = null;
-            Node temp;
+            SkipNode p = null;
+            SkipNode temp;
 
             temp = current.right;
             while (temp.left != null) {
@@ -127,7 +127,7 @@ public class BinarySearchTree {
         inorderRec(root);
     }
 
-    void inorderRec(Node root) {
+    void inorderRec(SkipNode root) {
         // Time complexity: O(n), where n is the number of nodes in the tree
         if (root != null) {
             inorderRec(root.left);

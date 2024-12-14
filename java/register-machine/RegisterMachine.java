@@ -6,7 +6,7 @@ class RegisterMachine {
     // Beinhaltet die Register als String und ihren Wert als Integer
     private Map<String, Integer> registers = new HashMap<>();    
 
-    private List<String> instructions = new ArrayList<>();
+    private SkipList<String> instructions = new ArrayList<>();
 
     public RegisterMachine() {
         // Initalisiert den Accumulator mit 0.
