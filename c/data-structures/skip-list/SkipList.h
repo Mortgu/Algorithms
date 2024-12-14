@@ -4,8 +4,8 @@
 #define MAX_LEVEL 6
 
 typedef struct SkipNode {
-    int key, value;
-    struct SkipNode *forward[]; // Express routes L1, L2, ...
+    int key, height;
+    struct SkipNode** forward; // Nächsten Nodes auf Ebene
 } SkipNode;
 
 typedef struct SkipList {
@@ -15,9 +15,10 @@ typedef struct SkipList {
 
 SkipList* createList();
 int search(SkipList* list, int key);
-void insert(SkipList* list, int key, int value);
+void insert(SkipList* list, int key);
+void delete(SkipList* list, int key);
 
-SkipNode* createNode(int key, int value, int level);
+SkipNode* createNode(int key, int level);
 int randomLevel();
 void print(SkipList* list);
 

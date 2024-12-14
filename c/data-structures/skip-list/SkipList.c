@@ -6,8 +6,20 @@
 int main(void) {
     SkipList* skipList = createList();
 
-    insert(skipList, 3, 34);
+    insert(skipList, 3);
+    insert(skipList, 66);
+    insert(skipList, 41);
+    insert(skipList, 31);
+    insert(skipList, 311);
+    insert(skipList, 310);
+    insert(skipList, 317);
+    insert(skipList, 315);
+    insert(skipList, 313);
+    insert(skipList, 232);
 
+
+    print(skipList);
+    delete(skipList, 313);
     print(skipList);
 
 
@@ -17,14 +29,16 @@ int main(void) {
 SkipList* createList() {
     SkipList* skipList = (SkipList*) malloc(sizeof(SkipList));
     skipList->level = 0;
-    skipList->header = createNode(INT_MIN, 0, MAX_LEVEL);
+    skipList->header = createNode(INT_MIN, MAX_LEVEL);
     return skipList;
 }
 
-SkipNode* createNode(int key, int value, int level) {
+SkipNode* createNode(int key, int level) {
     SkipNode* skipNode = (SkipNode*) malloc(sizeof(SkipNode));
+
     skipNode->key = key;
-    skipNode->value = value;
+    skipNode->height = level;
+    skipNode->forward = (SkipNode**) malloc((level + 1) * sizeof(SkipNode*));
 
     /**
      * Initialisiere alle express Routen mit NULL
@@ -53,7 +67,7 @@ int search(SkipList* list, int key) {
     return current != NULL && current->key == key;
 }
 
-void insert(SkipList* list, int key, int value) {
+void insert(SkipList* list, int key) {
     SkipNode* update[MAX_LEVEL + 1]; // Speichert besuchte Knoten.
     SkipNode* current = list->header;
 
@@ -77,7 +91,7 @@ void insert(SkipList* list, int key, int value) {
             list->level = newLevel;
         }
 
-        SkipNode* newNode = createNode(key, value, newLevel);
+        SkipNode* newNode = createNode(key, newLevel);
 
         // Nach dem einfügen eines Neuen Nodes, verlinkungen erkänzen.
         for (int i = 0; i <= newLevel; i++) {
@@ -87,12 +101,37 @@ void insert(SkipList* list, int key, int value) {
     }
 }
 
+void delete(SkipList* list, int key) {
+    SkipNode* update[MAX_LEVEL + 1]; // Speichert besuchte Knoten.
+    SkipNode* current = list->header;
+
+    for (int i = list->level; i >= 0; i--) {
+        while (current->forward[i] != NULL && current->forward[i]->key < key) {
+            current = current->forward[i];
+        }
+        update[i] = current;
+    }
+
+    // current steht an dem Knoten 1 vor dem Knoten mit dem key welcher einen sprung kleiner ist als der gesuchte. (bzw dem danach einzufügenden)
+    current = current->forward[0];
+
+    if (current == NULL || current->key == key) {
+        for (int i = 0; i <= current->height; i++) {
+            if (update[i]->forward[i] != current) break;
+
+            update[i]->forward[i] = current->forward[i];
+        }
+
+        free(current);
+    }
+}
+
 void print(SkipList* list) {
     for (int i = list->level; i >= 0; i--) {
         SkipNode* current = list->header->forward[i];
-        printf("Level %d", i);
+        printf("Level %d: ", i);
         while (current != NULL) {
-            printf("%d", current->key);
+            printf("%d\t", current->key);
             current = current->forward[i];
         }
         printf("\n");
