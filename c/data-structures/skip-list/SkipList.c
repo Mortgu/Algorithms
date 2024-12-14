@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <stdbool.h>
 #include "SkipList.h"
 
 int main(void) {
@@ -136,4 +137,26 @@ void print(SkipList* list) {
         }
         printf("\n");
     }
+}
+
+/**
+ * AUFGABE 4
+ */
+
+int NaiveSearch(char Text[], int n, char Muster[], int m) {
+  int count = 0;
+
+  for (int i = 0; i <= n - m; i++) {
+    int j = 0;
+    
+    if (Text[i] != Muster[j]) {
+      j++;
+      continue;
+    }
+    if (j == m) {
+      count++;
+    }
+    j = 0;
+  }
+  return count;
 }
