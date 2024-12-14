@@ -4,17 +4,21 @@
 #include "SkipList.h"
 
 int main(void) {
-    SkipList* skipList = (SkipList*) malloc(sizeof(struct SkipList));
+    SkipList* skipList = createList();
 
-    if (skipList == NULL) {
-        fprintf(stderr, "Failed to allocate memory for list!\n");
-        return 1;
-    }
+    insert(skipList, 3, 34);
 
-    init(skipList);
+    print(skipList);
 
-    free(skipList);
+
     return 0;
+}
+
+SkipList* createList() {
+    SkipList* skipList = (SkipList*) malloc(sizeof(SkipList));
+    skipList->level = 0;
+    skipList->header = createNode(INT_MIN, 0, MAX_LEVEL);
+    return skipList;
 }
 
 SkipNode* createNode(int key, int value, int level) {
@@ -50,7 +54,7 @@ int search(SkipList* list, int key) {
 }
 
 void insert(SkipList* list, int key, int value) {
-    SkipNode* update[MAX_LEVEL + 1];
+    SkipNode* update[MAX_LEVEL + 1]; // Speichert besuchte Knoten.
     SkipNode* current = list->header;
 
     for (int i = list->level; i >= 0; i--) {
@@ -60,11 +64,37 @@ void insert(SkipList* list, int key, int value) {
         update[i] = current;
     }
 
+    // current steht an dem Knoten 1 vor dem Knoten mit dem key welcher einen sprung kleiner ist als der gesuchte. (bzw dem danach einzufügenden)
     current = current->forward[0];
 
     if (current == NULL || current->key != key) {
         int newLevel = randomLevel();
 
-        if (newLevel > list->level) {}
+        if (newLevel > list->level) {
+            for (int i = list->level + 1; i <= newLevel; i++) {
+                update[i] = list->header; // Zieht den header mit nach oben.
+            }
+            list->level = newLevel;
+        }
+
+        SkipNode* newNode = createNode(key, value, newLevel);
+
+        // Nach dem einfügen eines Neuen Nodes, verlinkungen erkänzen.
+        for (int i = 0; i <= newLevel; i++) {
+            newNode->forward[i] = update[i]->forward[i];
+            update[i]->forward[i] = newNode;
+        }
+    }
+}
+
+void print(SkipList* list) {
+    for (int i = list->level; i >= 0; i--) {
+        SkipNode* current = list->header->forward[i];
+        printf("Level %d", i);
+        while (current != NULL) {
+            printf("%d", current->key);
+            current = current->forward[i];
+        }
+        printf("\n");
     }
 }

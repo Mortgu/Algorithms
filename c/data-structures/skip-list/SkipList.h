@@ -9,16 +9,16 @@ typedef struct SkipNode {
 } SkipNode;
 
 typedef struct SkipList {
-    int level, size;
+    int level;
     struct SkipNode *header;
 } SkipList;
 
-SkipList* init(SkipList* list);
+SkipList* createList();
 int search(SkipList* list, int key);
 void insert(SkipList* list, int key, int value);
 
-
 SkipNode* createNode(int key, int value, int level);
 int randomLevel();
+void print(SkipList* list);
 
 #endif
