@@ -1,8 +1,8 @@
 import java.util.*;
 
 public class Dijkstra {
-
-	public static void dijkstra(Map<Node, Map<Node, Integer>> graph, Node start) {
+	
+	public static void bfs(Map<Node, Map<Node, Integer>> graph, Node start) {
 		// Prioritätswarteschlange für die Auswahl des Knotens mit der geringsten
 		// Distanz
 		PriorityQueue<Node> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(node -> node.getDistance()));
@@ -36,13 +36,22 @@ public class Dijkstra {
 		Node nodeD = new Node("D");
 		Node nodeE = new Node("E");
 
-		graph.put(nodeA, Map.of(nodeB, 1, nodeC, 4, nodeD, 2));
-		graph.put(nodeB, Map.of(nodeA, 1, nodeC, 2, nodeE, 5));
-		graph.put(nodeC, Map.of(nodeA, 4, nodeB, 2, nodeD, 1, nodeE, 3));
-		graph.put(nodeD, Map.of(nodeA, 2, nodeC, 1, nodeE, 1));
-		graph.put(nodeE, Map.of(nodeB, 5, nodeC, 3, nodeD, 1));
+		Node nodeF = new Node("F");
+		Node nodeG = new Node("G");
+		Node nodeH = new Node("H");
+		Node nodeI = new Node("I");
 
-		dijkstra(graph, nodeA);
+		graph.put(nodeA, Map.of(nodeB, 1, nodeC, 1, nodeG, 1));
+		graph.put(nodeB, Map.of(nodeD, 1));
+		graph.put(nodeC, Map.of(nodeA, 1, nodeD, 1, nodeE, 1));
+		graph.put(nodeD, Map.of(nodeG, 1));
+		graph.put(nodeE, Map.of(nodeA, 1, nodeF, 1, nodeI, 1));
+		graph.put(nodeF, Map.of(nodeC, 1, nodeD, 1, nodeE, 1, nodeH, 1));
+		graph.put(nodeG, Map.of(nodeH, 1));
+		graph.put(nodeH, Map.of(nodeD, 1, nodeI, 1));
+		graph.put(nodeI, Map.of(nodeF, 1));
+
+		bfs(graph, nodeA);
 
 		System.out.println("Kürzeste Distanze vom Startknoten A:");
 		for (Node node : graph.keySet()) {
