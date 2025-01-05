@@ -1,76 +1,45 @@
-import java.util.Arrays;
+public class HeapSort {
+    public static void main(String[] args) {
+        int array[] = { 34, 45, 12, 34, 23, 18, 38, 17, 43, 7 };
+        Heap_Sort(array, 0, array.length - 2);
+    }
 
-public class Main {
-
-    // MergeSort
-    public static void mergeSort(int[] array, int left, int right) {
-        if (left < right) {
-            int mid = (left + right) / 2;
-            mergeSort(array, left, mid);
-            mergeSort(array, mid + 1, right);
-            merge(array, left, mid, right);
+    public static void BuildHeap(int array[], int first, int last) {
+        int n = last - first + 1;
+        System.out.println("n=" + n);
+        for (int i = first + (n - 2) / 2; i >= first; i--) {
+            Heapify(array, first, last, i);
         }
     }
 
-    public static void merge(int[] array, int left, int mid, int right) {
-        int[] temp = new int[right - left + 1];
-        int i = left, j = mid + 1, k = 0;
+    public static void Heapify(int array[], int first, int last, int root) {
+        int largest, left = first + (root - first) * 2 + 1, right = first + (root - first) * 2 + 2;
+        System.out.println("root=" + root + ", left=" + left + ", right=" + right + ", array[" + left + "]=" + array[left] + ", array[" + right + "]=" + array[right]);
 
-        while (i <= mid && j <= right) {
-            temp[k++] = (array[i] < array[j]) ? array[i++] : array[j++];
+        if (left <= last && array[left] > array[right]) 
+            largest = left;
+        else largest = root; 
+
+        if (right <= last && array[right] > array[largest]) 
+            largest = right;
+
+        if (largest != root) {
+            int swap = array[root];
+            array[root] = array[largest];
+            array[largest] = swap;
+            Heapify(array, first, last, largest);
         }
-        while (i <= mid) temp[k++] = array[i++];
-        while (j <= right) temp[k++] = array[j++];
+     }
 
-        System.arraycopy(temp, 0, array, left, temp.length);
-        System.out.println("Merge step: " + Arrays.toString(array));
-    }
+     public static void Heap_Sort(int array[], int first, int last) {
+        BuildHeap(array, first, last);
 
-    // HeapSort
-    public static void heapSort(int[] array) {
-        int n = array.length;
-
-        for (int i = n / 2 - 1; i >= 0; i--) {
-            heapify(array, n, i);
-        }
-
-        for (int i = n - 1; i > 0; i--) {
+        for (int i = last; i > first; i--) {
             int temp = array[0];
             array[0] = array[i];
             array[i] = temp;
 
-            heapify(array, i, 0);
-            System.out.println("Heap step: " + Arrays.toString(array));
+            Heapify(array, first, last - 1, i);
         }
-    }
-
-    public static void heapify(int[] array, int n, int i) {
-        int largest = i;
-        int left = 2 * i + 1;
-        int right = 2 * i + 2;
-
-        if (left < n && array[left] > array[largest]) largest = left;
-        if (right < n && array[right] > array[largest]) largest = right;
-
-        if (largest != i) {
-            int swap = array[i];
-            array[i] = array[largest];
-            array[largest] = swap;
-
-            heapify(array, n, largest);
-        }
-    }
-
-    public static void main(String[] args) {
-        int[] array1 = {-5, 13, -32, 7, -3, 17, 23, 12, -35, 19};
-        int[] array2 = array1.clone();
-
-        System.out.println("Original array: " + Arrays.toString(array1));
-        mergeSort(array1, 0, array1.length - 1);
-        System.out.println("Sorted by MergeSort: " + Arrays.toString(array1));
-
-        System.out.println("\nOriginal array: " + Arrays.toString(array2));
-        heapSort(array2);
-        System.out.println("Sorted by HeapSort: " + Arrays.toString(array2));
-    }
+     }
 }
